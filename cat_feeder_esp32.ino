@@ -5,10 +5,8 @@
 #include <HTTPClient.h>
 #include <time.h>
 #include <Wire.h>
-//#include <ESP_Mail_Client.h> // https://github.com/mobizt/ESP-Mail-Client
 #include "esp32-hal-ledc.h" // Add this line for PWM functions
 #include <WiFiClientSecure.h>
-
 
 // Email Includes
 #define ENABLE_SMTP
@@ -17,24 +15,23 @@
 #include <ReadyMail.h>
 
 // WIFI credentials
-const char* ssid = "N8MDG";
-const char* password = "mattg123";
+const char* ssid = "SSID HERE";
+const char* password = "PASS HERE";
 
 // SMTP config
 #define SMTP_HOST "smtp.gmail.com"
 #define SMTP_PORT 465
-#define AUTHOR_EMAIL "greathouse.matthew@gmail.com"
-#define AUTHOR_PASSWORD "yofw koiw lfvt kvvv"
-#define RECIPIENT_EMAIL "catfeed@stpaulwv.org"
+#define AUTHOR_EMAIL "youremail@gmail.com"
+#define AUTHOR_PASSWORD "your auth key here"
+#define RECIPIENT_EMAIL "recipient@email.com"
+// EDIT the above lines for your email
 
 // Email Setup
 WiFiClientSecure client;
 SMTPClient smtp(client);
 
 // L298N Motor config
-
 const int motorSpeed = 255; // PWM (0-255)
-
 #define MOTOR_PIN1 26  // H-Bridge input 1
 #define MOTOR_PIN2 27  // H-Bridge input 2
 #define MOTOR_EN 25   // H-Bridge enable pin
@@ -46,13 +43,12 @@ const int motorSpeed = 255; // PWM (0-255)
 
 // Global variables
 int speedValue = 255;
-//int lastSpeedValue = 0;
 
 // IR Sensor
 #define IR_SENSOR_PIN 33
 
 //NTFY Topic
-const char* ntfy_topic_url = "https://notify.codemov.com/cat";
+const char* ntfy_topic_url = "NTFY TOPIC URL HERE";
 
 // Feeding schedule
 struct FeedTime {
@@ -72,7 +68,6 @@ unsigned long feedDuration = 10000;
 //Email SMTP Status Check
 void smtpStatus(SMTPStatus status) {
   Serial.println(status.text);
-  //writeLog(getCurrentTimeStr() + status.text);
 }
 
 // State
@@ -211,8 +206,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 </html>
 )rawliteral";
 
-// Email setup
-
+// Setup
 void setup() {
   Serial.begin(115200);
   pinMode(IR_SENSOR_PIN, INPUT);
@@ -222,6 +216,7 @@ void setup() {
   pinMode(MOTOR_PIN2, OUTPUT);
   pinMode(MOTOR_EN, OUTPUT);
 
+// Start Wifi, connect to existing AP
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
   Serial.print("WiFi connected: "); Serial.println(WiFi.localIP());
@@ -322,11 +317,12 @@ void setup() {
   server.begin();
 }
 
+// Send NTFY Notification
 void sendNotification(String body) {
   HTTPClient http;
   http.begin(ntfy_topic_url);
   http.addHeader("Content-Type", "text/plain");
-  http.addHeader("X-Actions", "view, Cat Feeder, https://cat.codemov.com");
+  http.addHeader("X-Actions", "view, Cat Feeder, https://linkurl.com"); // Change to insert a link to your GUI in the NTFY notification
   int httpResponseCode = http.POST(body);
   http.end();
 }
@@ -342,7 +338,6 @@ void runFeeder() {
     analogWrite(MOTOR_EN, 0);
     sendNotification("Cat Feeder Alert : Scheduled Feeding - Cat food dispensed at scheduled time.");
 }
-
 
 // Email sending handler. Must be called with a value for emailbody, otherwise the email will be blank.
 void sendemail(String emailbody) {
