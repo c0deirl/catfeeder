@@ -25,4 +25,5 @@ After browsing the web for hours looking for an affordible WIFI schedulable cat 
  - IR (or white) LED
  - 5615 Photoresistor Light Sensor Module (3 Pin)
 
-## 
+## Web GUI
+<img width="622" height="661" alt="catfeedgui" src="https://github.com/user-attachments/assets/f7295b1c-018e-4dda-9069-a7c3aef884fa" />
